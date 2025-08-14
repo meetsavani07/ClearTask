@@ -1,6 +1,7 @@
 // import { ClipboardList } from "lucide-react";
 import type { Task } from "../types/Task";
 import { TaskItem } from "./TaskItem";
+import disappointedimg from '../assets/disappointed.png';
 
 interface TaskListProps {
     tasks: Task[];
@@ -24,7 +25,7 @@ export const TaskList: React.FC<TaskListProps> = ({
             <div className="text-center py-12">
                 {/* <ClipboardList className="h-16 w-16 text-slate-300 mx-auto" /> */}
                 <div className="flex items-center justify-center">
-                    <img src="./src/assets/disappointed.png" alt="" className="w-20 " />
+                    <img src={disappointedimg} alt="" className="w-20 " />
                 </div>
                 <h3 className="text-lg font-medium text-slate-600 mb-2">I'm really disappointed in you because you're too lazy to make a task. </h3>
                 <p className="text-slate-500">Create your first task to get started!</p>

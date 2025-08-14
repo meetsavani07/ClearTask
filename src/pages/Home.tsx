@@ -7,6 +7,7 @@ import { EditTask } from '../components/EditTask';
 import { useTasks } from '../hooks/useTask';
 import type { Task } from '../types/Task';
 import { motion } from 'framer-motion';
+import helloimg from '../assets/hello.png';
 
 interface HomePageProps {
   searchTerm: string;
@@ -86,7 +87,7 @@ export const Home: React.FC<HomePageProps> = ({ searchTerm }) => {
       <div className="bg-gray-50 pt-5 pb-24 space-y-6">
         <div className="text-center">
           <h1 className="text-3xl flex items-center justify-center font-bold text-slate-800 mb-2">
-            {<img src="../src/assets/hello.png" alt="" className='w-10' />}
+            {<img src={helloimg} alt="" className='w-10' />}
             <p className='ml-2'>
               {timeGreeting}
             </p>
