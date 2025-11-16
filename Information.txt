@@ -1,4 +1,0 @@
-How to update IN PWA Application
-1 --> npm run dev (Check Application run)
-2 --> npm run build (Build Application)
-3 --> npm run preview (Check Build Application run)
