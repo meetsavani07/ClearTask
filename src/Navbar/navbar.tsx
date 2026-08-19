@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Home, ListTodo, Search, Bell, User } from "lucide-react";
+import { Menu, X, Home, ListTodo, Search, Bell, User, Download, Check } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useInstallPrompt } from "../hooks/useInstallPrompt";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -14,6 +16,29 @@ const Navbar: React.FC<SearchBarProps> = ({ onSearch, children, searchTerm = '',
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const { canInstall, installed, isIos, promptInstall } = useInstallPrompt();
+
+  const handleInstallClick = async () => {
+    if (installed) return;
+
+    if (isIos) {
+      toast(
+        "On iPhone/iPad: tap the Share icon, then \"Add to Home Screen\".",
+        { icon: "📲", duration: 5000 }
+      );
+      return;
+    }
+
+    const outcome = await promptInstall();
+    if (outcome === "unavailable") {
+      toast(
+        "Open your browser menu and choose \"Install app\" to download ClearTask.",
+        { icon: "⬇️", duration: 5000 }
+      );
+    } else if (outcome === "accepted") {
+      toast.success("ClearTask installed!");
+    }
+  };
 
   const links = [
     { path: "/", label: "Home", icon: Home },
@@ -59,6 +84,24 @@ const Navbar: React.FC<SearchBarProps> = ({ onSearch, children, searchTerm = '',
                 </Link>
               </motion.div>
             ))}
+            <motion.button
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * (links.length + 1) }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleInstallClick}
+              disabled={installed}
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                installed
+                  ? "text-green-600 bg-green-500/10 cursor-default"
+                  : "text-white bg-orange-400 hover:bg-orange-500"
+              }`}
+              aria-label={installed ? "App already installed" : "Download ClearTask app"}
+            >
+              {installed ? <Check className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+              {installed ? "Installed" : "Download"}
+            </motion.button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -188,6 +231,27 @@ const Navbar: React.FC<SearchBarProps> = ({ onSearch, children, searchTerm = '',
                   </Link>
                 </motion.div>
               ))}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: links.length * 0.1 }}
+              >
+                <button
+                  onClick={() => {
+                    handleInstallClick();
+                    setIsOpen(false);
+                  }}
+                  disabled={installed}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-300 ${
+                    installed
+                      ? "text-green-600 bg-green-500/10"
+                      : "text-black hover:text-orange-400 hover:bg-white/50"
+                  }`}
+                >
+                  {installed ? <Check className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+                  {installed ? "App Installed" : "Download App"}
+                </button>
+              </motion.div>
             </div>
           </motion.div>
         )}
