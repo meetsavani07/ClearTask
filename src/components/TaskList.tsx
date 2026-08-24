@@ -1,6 +1,6 @@
-// import { ClipboardList } from "lucide-react";
 import type { Task } from "../types/Task";
 import { TaskItem } from "./TaskItem";
+import { motion } from "framer-motion";
 import disappointedimg from '../assets/disappointed.png';
 
 interface TaskListProps {
@@ -23,24 +23,26 @@ export const TaskList: React.FC<TaskListProps> = ({
     if (tasks.length === 0) {
         return (
             <div className="text-center py-12">
-                {/* <ClipboardList className="h-16 w-16 text-slate-300 mx-auto" /> */}
                 <div className="flex items-center justify-center">
                     <img src={disappointedimg} alt="" className="w-20 " />
                 </div>
                 <h3 className="text-lg font-medium text-slate-600 mb-2">I'm really disappointed in you because you're too lazy to make a task. </h3>
                 <p className="text-slate-500">Create your first task to get started!</p>
-
             </div>
         );
     }
 
-
     return (
-        <div className="space-y-4">
-            <div className="sm:m-10 m-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {tasks.map((task) => (
+        <div className="sm:m-10 m-5 columns-1 sm:columns-2 lg:columns-3 [column-gap:1rem]">
+            {tasks.map((task, index) => (
+                <motion.div
+                    key={`${task.id}-${index}`}
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.25, delay: Math.min(index * 0.04, 0.3) }}
+                    className="mb-4 w-full min-w-0 break-inside-avoid"
+                >
                     <TaskItem
-                        key={task.id}
                         task={task}
                         onToggleComplete={onToggleComplete}
                         onDelete={onDelete}
@@ -48,8 +50,8 @@ export const TaskList: React.FC<TaskListProps> = ({
                         onEdit={onEdit}
                         onTogglePin={onTogglePin}
                     />
-                ))}
-            </div>
+                </motion.div>
+            ))}
         </div>
     );
 };

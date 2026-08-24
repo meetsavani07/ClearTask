@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, X, Clock, Flag, MoreVertical, Copy, Edit, Pin, PinOff } from 'lucide-react';
+import { Check, X, Clock, Flag, MoveVertical as MoreVertical, Copy, CreditCard as Edit, Pin, PinOff } from 'lucide-react';
 import type { Task } from '../types/Task';
 
 interface TaskItemProps {
@@ -64,9 +64,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   };
 
   return (
-    <div className={`group bg-slate-200 rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md relative ${
-      task.completed 
-        ? 'border-green-200 bg-green-50/30' 
+    <div
+      className={`group min-w-0 w-full bg-slate-200 rounded-xl border-2 p-4 transition-colors duration-200 hover:shadow-md relative ${
+      task.completed
+        ? 'border-green-200 bg-green-50/30'
         : task.pinned
         ? 'border-yellow-300 bg-blue-50/30 shadow-sm'
         : 'border-slate-200 hover:border-orange-300'
@@ -80,7 +81,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       )}
       
       <div className="flex items-start justify-between">
-        <div className="flex items-start space-x-3 flex-1">
+        <div className="flex items-start space-x-3 flex-1 min-w-0">
           <button
             onClick={() => onToggleComplete(task.id)}
             className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
@@ -100,11 +101,23 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             </h3>
             
             {task.description && (
-              <p className={`text-sm mt-1 transition-all duration-200 ${
+              <ul className={`mt-1 space-y-1 transition-all duration-200 ${
                 task.completed ? 'text-slate-400' : 'text-slate-600'
               }`}>
-                {task.description}
-              </p>
+                {task.description.split("\n").map((line, idx) => {
+                  const trimmed = line.trim();
+                  if (!trimmed) return null;
+                  const match = trimmed.match(/^(\d+)[.)]\s*(.*)$/);
+                  const number = match ? match[1] : String(idx + 1);
+                  const text = match ? match[2] : trimmed;
+                  return (
+                    <li key={`${task.id}-point-${idx}`} className="flex items-start gap-2 text-sm min-w-0">
+                      <span className="font-medium text-orange-500 shrink-0">{number}.</span>
+                      <span className="min-w-0 break-words [overflow-wrap:anywhere]">{text}</span>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
             
             <div className="flex items-center space-x-3 mt-2">

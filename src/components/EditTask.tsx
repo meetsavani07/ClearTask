@@ -75,14 +75,14 @@ export const EditTask: React.FC<EditTaskModalProps> = ({ isOpen, onClose, onUpda
 
           <div>
             <label htmlFor="edit-description" className="block text-sm font-medium text-slate-700 mb-2">
-              Description (optional)
+              Points (optional)
             </label>
             <textarea
               id="edit-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add more details..."
-              rows={3}
+              placeholder={"Add one point per line, e.g.\n1. Portfolio\n2. Estimate App"}
+              rows={4}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 resize-none"
             />
           </div>
