@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Check, X, Clock, Flag, MoveVertical as MoreVertical, Copy, CreditCard as Edit, Pin, PinOff } from 'lucide-react';
+import React from 'react';
+import { Check, Trash2, Clock, Flag, Pencil, Pin, PinOff } from 'lucide-react';
 import type { Task } from '../types/Task';
 
 interface TaskItemProps {
@@ -23,30 +23,13 @@ const priorityIcons = {
   high: 'text-red-500',
 };
 
-export const TaskItem: React.FC<TaskItemProps> = ({ 
-  task, 
-  onToggleComplete, 
-  onDelete, 
-  onDuplicate, 
-  onEdit, 
-  onTogglePin 
+export const TaskItem: React.FC<TaskItemProps> = ({
+  task,
+  onToggleComplete,
+  onDelete,
+  onEdit,
+  onTogglePin
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -56,11 +39,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       year: 'numeric',
     });
     return `${dayName}, ${formattedDate}`;
-  };
-
-  const handleMenuAction = (action: () => void) => {
-    action();
-    setIsMenuOpen(false);
   };
 
   return (
@@ -138,54 +116,32 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           </div>
         </div>
         
-        <div className="flex items-center space-x-1 ml-3">
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all duration-200"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </button>
-            
-            {isMenuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-10">
-                <button
-                  onClick={() => handleMenuAction(() => onEdit(task))}
-                  className="w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center space-x-2"
-                >
-                  <Edit className="h-4 w-4" />
-                  <span>Edit Task</span>
-                </button>
-                
-                <button
-                  onClick={() => handleMenuAction(() => onDuplicate(task.id))}
-                  className="w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center space-x-2"
-                >
-                  <Copy className="h-4 w-4" />
-                  <span>Duplicate Task</span>
-                </button>
-                
-                <button
-                  onClick={() => handleMenuAction(() => onTogglePin(task.id))}
-                  className="w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center space-x-2"
-                >
-                  {task.pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
-                  <span>{task.pinned ? 'Unpin Task' : 'Pin Task'}</span>
-                </button>
-                
-                <hr className="my-1 border-slate-200" />
-                
-                <button
-                  onClick={() => handleMenuAction(() => onDelete(task.id))}
-                  className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
-                >
-                  
-                  <X className="h-4 w-4" />
-                  <span>Delete Task</span>
-                </button>
-              </div>
-            )}
-          </div>
+        <div className="flex items-center gap-1 ml-3 shrink-0">
+          <button
+            onClick={() => onEdit(task)}
+            className="p-1.5 text-slate-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-all duration-200"
+            aria-label="Edit task"
+          >
+            <Pencil className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => onTogglePin(task.id)}
+            className={`p-1.5 rounded-lg transition-all duration-200 ${
+              task.pinned
+                ? 'text-orange-500 bg-orange-50'
+                : 'text-slate-500 hover:text-orange-500 hover:bg-orange-50'
+            }`}
+            aria-label={task.pinned ? 'Unpin task' : 'Pin task'}
+          >
+            {task.pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+          </button>
+          <button
+            onClick={() => onDelete(task.id)}
+            className="p-1.5 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
+            aria-label="Delete task"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </div>
