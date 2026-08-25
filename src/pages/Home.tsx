@@ -33,10 +33,7 @@ export const Home: React.FC<HomePageProps> = ({ searchTerm }) => {
   const filteredAndSortedTasks = [...tasks]
     .filter((task) => {
       if (!searchTerm) return true;
-      return (
-        task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      return task.title.toLowerCase().includes(searchTerm.toLowerCase());
     })
     .sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;

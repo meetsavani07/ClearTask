@@ -30,11 +30,10 @@ export const Tasks: React.FC<TaskPageProps> = ({ searchTerm }) => {
     
     let filtered = tasks;
 
-    // Filter by search term
+    // Filter by search term (title only)
     if (searchTerm) {
       filtered = filtered.filter(task =>
-        task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        task.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 

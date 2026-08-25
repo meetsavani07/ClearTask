@@ -46,7 +46,7 @@ export const EditTask: React.FC<EditTaskModalProps> = ({ isOpen, onClose, onUpda
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-0">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <h2 className="text-xl font-semibold text-slate-800">Edit Task</h2>
           <button
@@ -82,7 +82,7 @@ export const EditTask: React.FC<EditTaskModalProps> = ({ isOpen, onClose, onUpda
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={"Add one point per line, e.g.\n1. Portfolio\n2. Estimate App"}
-              rows={4}
+              rows={6}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 resize-none"
             />
           </div>

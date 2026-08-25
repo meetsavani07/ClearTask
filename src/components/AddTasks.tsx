@@ -53,7 +53,7 @@ export const AddTasks: React.FC<AddTaskModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -112,7 +112,7 @@ export const AddTasks: React.FC<AddTaskModalProps> = ({
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition-all text-sm sm:text-base resize-none"
                 placeholder={"Add one point per line, e.g.\n1. Portfolio\n2. Estimate App"}
-                rows={4}
+                rows={6}
               />
             </div>
 
