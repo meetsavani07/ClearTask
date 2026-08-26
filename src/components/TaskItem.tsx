@@ -1,5 +1,6 @@
-import React from 'react';
-import { Check, Trash2, Clock, Flag, Pencil, Pin, PinOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Trash2, Clock, Flag, Pencil, Pin, PinOff, TriangleAlert as AlertTriangle } from 'lucide-react';
 import type { Task } from '../types/Task';
 
 interface TaskItemProps {
@@ -30,13 +31,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onEdit,
   onTogglePin,
 }) => {
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
     const formattedDate = date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric',
     });
     return `${dayName}, ${formattedDate}`;
   };
@@ -59,7 +60,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         </div>
       )}
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-start">
         <div className="flex items-start space-x-3 flex-1 min-w-0">
           <button
             onClick={() => onToggleComplete(task.id)}
@@ -74,7 +75,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
           <div className="flex-1 min-w-0">
             <h3
-              className={`font-medium transition-all duration-200 ${
+              className={`font-medium pr-20 transition-all duration-200 ${
                 task.completed
                   ? 'text-slate-500 line-through'
                   : 'text-slate-800'
@@ -132,7 +133,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-0.5 ml-2 shrink-0">
+        <div className="absolute top-4 right-4 flex items-center gap-0.5">
           <button
             onClick={() => onEdit(task)}
             className="p-1 text-slate-500 hover:text-orange-500 hover:bg-orange-50 rounded-md transition-all duration-200"
@@ -156,7 +157,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             )}
           </button>
           <button
-            onClick={() => onDelete(task.id)}
+            onClick={() => setIsConfirmingDelete(true)}
             className="p-1 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-md transition-all duration-200"
             aria-label="Delete task"
           >
@@ -164,6 +165,52 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           </button>
         </div>
       </div>
+
+      {isConfirmingDelete && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          onClick={() => setIsConfirmingDelete(false)}
+        >
+          <AnimatePresence>
+            <motion.div
+              key="delete-confirm"
+              initial={{ opacity: 0, scale: 0.9, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 10 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
+            >
+              <div className="flex flex-col items-center text-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <AlertTriangle className="h-6 w-6 text-red-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-800">Delete this task?</h3>
+                <p className="text-sm text-slate-500">
+                  "{task.title}" will be permanently removed. This can't be undone.
+                </p>
+              </div>
+              <div className="flex gap-3 mt-5">
+                <button
+                  onClick={() => setIsConfirmingDelete(false)}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    onDelete(task.id);
+                    setIsConfirmingDelete(false);
+                  }}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all duration-200"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 };

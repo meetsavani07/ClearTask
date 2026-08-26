@@ -138,7 +138,7 @@ export const AddTasks: React.FC<AddTaskModalProps> = ({
                 Due Date (optional)
               </label>
               <input
-                type="datetime-local"
+                type="date"
                 id="dueDate"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}

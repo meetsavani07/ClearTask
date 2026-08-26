@@ -20,7 +20,7 @@ export const EditTask: React.FC<EditTaskModalProps> = ({ isOpen, onClose, onUpda
       setTitle(task.title);
       setDescription(task.description || '');
       setPriority(task.priority);
-      setDueDate(task.dueDate || '');
+      setDueDate(task.dueDate ? task.dueDate.slice(0, 10) : '');
     }
   }, [task]);
 
@@ -109,7 +109,7 @@ export const EditTask: React.FC<EditTaskModalProps> = ({ isOpen, onClose, onUpda
                 Due Date (optional)
               </label>
               <input
-                type="datetime-local"
+                type="date"
                 id="edit-dueDate"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
