@@ -133,7 +133,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                       <span className="font-medium text-orange-500 shrink-0">
                         {number}.
                       </span>
-                      <span className="min-w-0 break-words [overflow-wrap:anywhere]">
+                      <span className="min-w-0 break-words">
                         {text}
                       </span>
                     </li>
@@ -283,7 +283,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                           <span className="font-medium text-orange-500 shrink-0">
                             {number}.
                           </span>
-                          <span className="min-w-0 break-words [overflow-wrap:anywhere]">
+                          <span className="min-w-0 break-words">
                             {text}
                           </span>
                         </li>
