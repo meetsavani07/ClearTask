@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Home, ListTodo, Search, Bell, User, Download, Check } from "lucide-react";
-import { useState } from "react";
+import { Menu, X, Hop as Home, ListTodo, Search, Bell, User, Download, Check } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useInstallPrompt } from "../hooks/useInstallPrompt";
@@ -16,7 +16,20 @@ const Navbar: React.FC<SearchBarProps> = ({ onSearch, children, searchTerm = '',
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { canInstall, installed, isIos, promptInstall } = useInstallPrompt();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleInstallClick = async () => {
     if (installed) return;
@@ -54,7 +67,7 @@ const Navbar: React.FC<SearchBarProps> = ({ onSearch, children, searchTerm = '',
 
   const clearSearch = () => {
     setSearchQuery("");
-    onSearch("");
+    onSearchChange?.("");
   };
 
   return (
@@ -153,22 +166,27 @@ const Navbar: React.FC<SearchBarProps> = ({ onSearch, children, searchTerm = '',
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-300"
                 size={18} />
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Search Your Task"
                 value={searchTerm}
                 onChange={(e) => onSearchChange?.(e.target.value)}
                 className="w-full pl-10 pr-10 py-2.5 bg-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition-all text-sm sm:text-base"
-                aria-label="Search Task" 
+                aria-label="Search Task"
               />
-              {searchQuery && (
+              {searchTerm ? (
                 <button
                   type="button"
                   onClick={clearSearch}
-                  className="absolute right-5 top-1/2 transform -translate-y-1/2 text-black- hover:text-gray-600"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   aria-label="Clear search"
                 >
                   <X size={18} />
                 </button>
+              ) : (
+                <kbd className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex items-center justify-center w-6 h-6 text-xs font-medium text-slate-400 bg-slate-300/60 rounded-md border border-slate-300">
+                  /
+                </kbd>
               )}
             </motion.div>
           </div>

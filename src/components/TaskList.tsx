@@ -10,6 +10,7 @@ interface TaskListProps {
     onDuplicate: (id: string) => void;
     onEdit: (task: Task) => void;
     onTogglePin: (id: string) => void;
+    viewMode?: 'grid' | 'list';
 }
 
 export const TaskList: React.FC<TaskListProps> = ({
@@ -19,6 +20,7 @@ export const TaskList: React.FC<TaskListProps> = ({
     onDuplicate,
     onEdit,
     onTogglePin,
+    viewMode = 'grid',
 }) => {
     if (tasks.length === 0) {
         return (
@@ -32,8 +34,12 @@ export const TaskList: React.FC<TaskListProps> = ({
         );
     }
 
+    const containerClass = viewMode === 'list'
+        ? "sm:m-10 m-5 space-y-4 max-w-3xl mx-auto"
+        : "sm:m-10 m-5 columns-1 sm:columns-2 lg:columns-3 [column-gap:1rem]";
+
     return (
-        <div className="sm:m-10 m-5 columns-1 sm:columns-2 lg:columns-3 [column-gap:1rem]">
+        <div className={containerClass}>
             {tasks.map((task, index) => (
                 <motion.div
                     key={`${task.id}-${index}`}

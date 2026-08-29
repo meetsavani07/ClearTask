@@ -1,4 +1,4 @@
-import { SquareCheck as CheckSquare } from "lucide-react";
+import { SquareCheck as CheckSquare, LayoutGrid, List } from "lucide-react";
 import { useTasks } from "../hooks/useTask";
 import { TaskList } from "../components/TaskList";
 import { EditTask } from "../components/EditTask";
@@ -17,6 +17,7 @@ export const Tasks: React.FC<TaskPageProps> = ({ searchTerm }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [sortType, setSortType] = useState<SortType>('date');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const completedCount = tasks.filter(task => task.completed).length;
   const pendingCount = tasks.filter(task => !task.completed).length;
 
@@ -103,6 +104,22 @@ export const Tasks: React.FC<TaskPageProps> = ({ searchTerm }) => {
               {filteredAndSortedTasks.length} task{filteredAndSortedTasks.length !== 1 ? 's' : ''}
               {filterType !== 'all' && ` (${filterType})`}
             </h3>
+            <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-md transition-all duration-200 ${viewMode === 'grid' ? 'bg-white text-orange-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                aria-label="Grid view"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-1.5 rounded-md transition-all duration-200 ${viewMode === 'list' ? 'bg-white text-orange-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                aria-label="List view"
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
           </div>
           <div className="sm:-ml-3 sm:-mr-3 -ml-5 -mr-5 space-y-6 ">
             <TaskList
@@ -112,6 +129,7 @@ export const Tasks: React.FC<TaskPageProps> = ({ searchTerm }) => {
               onDuplicate={duplicateTask}
               onEdit={handleEdit}
               onTogglePin={togglePin}
+              viewMode={viewMode}
             />
           </div>
 
