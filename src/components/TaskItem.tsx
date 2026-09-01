@@ -13,6 +13,7 @@ import {
   X,
   Share2,
   Folder,
+  CalendarX,
 } from 'lucide-react';
 import type { Task } from '../types/Task';
 import { getCategoryColor } from '../types/Task';
@@ -102,11 +103,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     });
   };
 
+  const isExpired = task.dueDate && !task.completed && new Date(task.dueDate) < new Date(new Date().toDateString());
+
   return (
     <div
       className={`group min-w-0 w-full bg-slate-200 rounded-xl border-2 p-4 transition-colors duration-200 hover:shadow-md relative ${
         task.completed
           ? 'border-green-200 bg-green-50/30'
+          : isExpired
+          ? 'border-red-300 bg-red-50/30'
           : task.pinned
           ? 'border-yellow-300 bg-blue-50/30 shadow-sm'
           : 'border-slate-200 hover:border-orange-300'
@@ -199,9 +204,16 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               </span>
 
               {task.dueDate && (
-                <span className="inline-flex items-center space-x-1 text-xs text-slate-500">
+                <span className={`inline-flex items-center space-x-1 text-xs ${isExpired ? 'text-red-600 font-medium' : 'text-slate-500'}`}>
                   <Clock className="h-3 w-3" />
                   <span>{formatDate(task.dueDate)}</span>
+                </span>
+              )}
+
+              {isExpired && (
+                <span className="inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200">
+                  <CalendarX className="h-3 w-3" />
+                  <span>Expired</span>
                 </span>
               )}
             </div>
@@ -316,6 +328,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                     <span>Pinned</span>
                   </span>
                 )}
+
+                {isExpired && (
+                  <span className="inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200">
+                    <CalendarX className="h-3 w-3" />
+                    <span>Expired</span>
+                  </span>
+                )}
               </div>
 
               <div className="flex gap-2 mt-3">
@@ -329,9 +348,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               </div>
 
               {task.dueDate && (
-                <div className="flex items-center space-x-2 mt-4 text-sm text-slate-600">
-                  <Clock className="h-4 w-4 text-slate-400" />
-                  <span>Due {formatFullDate(task.dueDate)}</span>
+                <div className={`flex items-center space-x-2 mt-4 text-sm ${isExpired ? 'text-red-600' : 'text-slate-600'}`}>
+                  {isExpired ? <CalendarX className="h-4 w-4 text-red-500" /> : <Clock className="h-4 w-4 text-slate-400" />}
+                  <span>{isExpired ? 'Overdue — was due ' : 'Due '}{formatFullDate(task.dueDate)}</span>
                 </div>
               )}
 
