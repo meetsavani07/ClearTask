@@ -1,0 +1,190 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { TaskList } from "../components/TaskList";
+import AddTasks from "../components/AddTasks";
+import { EditTask } from "../components/EditTask";
+import { useTasks } from "../hooks/useTask";
+import type { Task } from "../types/Task";
+import { getUniqueCategories, getCategoryColor } from "../types/Task";
+import { motion } from "framer-motion";
+import helloimg from "../assets/hello.png";
+
+interface HomePageProps {
+  searchTerm: string;
+}
+
+export const Home: React.FC<HomePageProps> = ({ searchTerm }) => {
+  const [greeting] = useState("");
+  const {
+    tasks,
+    addTask,
+    toggleComplete,
+    deleteTask,
+    duplicateTask,
+    togglePin,
+    updateTask,
+    isLoaded,
+  } = useTasks();
+  const [name, setName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
+  const categories = useMemo(() => getUniqueCategories(tasks), [tasks]);
+
+  const filteredAndSortedTasks = useMemo(() => {
+    let filtered = tasks;
+
+    if (searchTerm) {
+      filtered = filtered.filter((task) =>
+        task.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (categoryFilter !== "all") {
+      filtered = filtered.filter((task) => task.category === categoryFilter);
+    }
+
+    return [...filtered].sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [tasks, searchTerm, categoryFilter]);
+
+  const handleEdit = (task: Task) => {
+    setEditingTask(task);
+    setIsEditModalOpen(true);
+  };
+
+  const timeGreeting = useMemo(() => {
+    const currentHour = new Date().getHours();
+
+    if (currentHour >= 5 && currentHour < 12) {
+      return "Good Morning";
+    } else if (currentHour >= 12 && currentHour < 17) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  }, []);
+
+  useEffect(() => {
+    const data = localStorage.getItem("user");
+    if (data) {
+      try {
+        const newData = JSON.parse(data);
+        setName(newData.name);
+      } catch (error) {
+        console.error("Invalid JSON in localStorage:", error);
+      }
+    }
+  }, []);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading tasks...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="bg-gray-50 pt-5 pb-24 space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl flex items-center justify-center font-bold text-slate-800 mb-2">
+            {<img src={helloimg} alt="" className="w-10" />}
+            <p className="ml-2">{timeGreeting}</p>
+            <p className="ml-2">{name}</p>
+          </h1>
+          <p>{greeting}</p>
+        </div>
+
+        <div className="flex justify-between items-center m-10">
+          <h2 className="text-xl font-semibold text-slate-800">Your Tasks</h2>
+
+          <div className="flex items-center space-x-3">
+            <motion.button
+              onClick={() => setIsModalOpen(true)}
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{
+                delay: 0.3,
+                type: "spring",
+                stiffness: 300,
+                damping: 20,
+              }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-orange-400 to-orange-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex justify-center px-4 py-2 duration-200"
+            >
+              <Plus className="h-4 w-4" />
+            </motion.button>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 mx-10">
+          <button
+            onClick={() => setCategoryFilter("all")}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
+              categoryFilter === "all"
+                ? "bg-orange-500 text-white border-orange-500 shadow-sm"
+                : "bg-white text-slate-600 border-slate-200 hover:border-orange-300"
+            }`}
+          >
+            All
+          </button>
+          {categories.map((cat) => {
+            const isActive = categoryFilter === cat;
+            const colorClass = getCategoryColor(cat);
+            return (
+              <button
+                key={cat}
+                onClick={() => setCategoryFilter(cat)}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
+                  isActive
+                    ? `${colorClass} ring-2 ring-offset-1 ring-orange-300`
+                    : "bg-white text-slate-600 border-slate-200 hover:border-orange-300"
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        <TaskList
+          tasks={filteredAndSortedTasks}
+          onToggleComplete={toggleComplete}
+          onDelete={deleteTask}
+          onDuplicate={duplicateTask}
+          onEdit={handleEdit}
+          onTogglePin={togglePin}
+        />
+
+        <AddTasks
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAdd={addTask}
+        />
+
+        <EditTask
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setEditingTask(null);
+          }}
+          onUpdate={updateTask}
+          task={editingTask}
+        />
+      </div>
+    </>
+  );
+};
+
+export default Home;
