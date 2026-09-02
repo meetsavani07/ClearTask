@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Hop as Home, ListTodo, Search, User, Download, Check } from "lucide-react";
+import { Menu, X, Home, ListTodo, Search, User, Download, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
