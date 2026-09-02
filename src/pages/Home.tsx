@@ -133,8 +133,8 @@ export const Home: React.FC<HomePageProps> = ({ searchTerm }) => {
             onClick={() => setCategoryFilter("all")}
             className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
               categoryFilter === "all"
-                ? "bg-orange-500 text-white border-orange-500 shadow-sm"
-                : "bg-white text-slate-600 border-slate-200 hover:border-orange-300"
+                ? "bg-slate-800 text-white border-slate-800 shadow-sm"
+                : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
             }`}
           >
             All
@@ -148,8 +148,8 @@ export const Home: React.FC<HomePageProps> = ({ searchTerm }) => {
                 onClick={() => setCategoryFilter(cat)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
                   isActive
-                    ? `${colorClass} ring-2 ring-offset-1 ring-orange-300`
-                    : "bg-white text-slate-600 border-slate-200 hover:border-orange-300"
+                    ? colorClass
+                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
                 }`}
               >
                 {cat}

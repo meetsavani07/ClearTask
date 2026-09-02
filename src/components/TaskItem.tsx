@@ -11,13 +11,9 @@ import {
   TriangleAlert as AlertTriangle,
   Eye,
   X,
-  Share2,
-  Folder,
   CalendarX,
 } from 'lucide-react';
 import type { Task } from '../types/Task';
-import { getCategoryColor } from '../types/Task';
-import { showToast } from '../utils/toast';
 
 interface TaskItemProps {
   task: Task;
@@ -49,39 +45,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 }) => {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [isViewingTask, setIsViewingTask] = useState(false);
-
-  const buildShareText = () => {
-    const lines = [`Task: ${task.title}`];
-    lines.push(`Category: ${task.category}`);
-    lines.push(`Priority: ${task.priority}`);
-    if (task.dueDate) lines.push(`Due: ${formatFullDate(task.dueDate)}`);
-    if (task.completed) lines.push('Status: Completed');
-    if (task.description) lines.push(``, 'Details:', task.description);
-    return lines.join('\n');
-  };
-
-  const handleShare = async () => {
-    const shareData = {
-      title: `ClearTask: ${task.title}`,
-      text: buildShareText(),
-    };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch {
-        // user cancelled
-      }
-    } else if (navigator.clipboard) {
-      try {
-        await navigator.clipboard.writeText(shareData.text);
-        showToast.success('Task copied to clipboard — paste it anywhere!');
-      } catch {
-        showToast.error('Could not share or copy this task.');
-      }
-    } else {
-      showToast.error('Sharing is not supported on this device.');
-    }
-  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -187,15 +150,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             <div className="flex flex-wrap items-center gap-2 mt-2">
               <span
                 className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border ${
-                  getCategoryColor(task.category)
-                }`}
-              >
-                <Folder className="h-3 w-3" />
-                <span>{task.category}</span>
-              </span>
-
-              <span
-                className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border ${
                   priorityColors[task.priority]
                 }`}
               >
@@ -211,9 +165,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               )}
 
               {isExpired && (
-                <span className="inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200">
-                  <CalendarX className="h-3 w-3" />
-                  <span>Expired</span>
+                <span className="inline-flex items-center px-1.5 py-1 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200" title="Expired">
+                  <CalendarX className="h-3.5 w-3.5" />
                 </span>
               )}
             </div>
@@ -227,13 +180,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             aria-label="View task"
           >
             <Eye className="h-3.5 w-3.5" />
-          </button>
-          <button
-            onClick={handleShare}
-            className="p-1 text-slate-500 hover:text-orange-500 hover:bg-orange-50 rounded-md transition-all duration-200"
-            aria-label="Share task"
-          >
-            <Share2 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => onEdit(task)}
@@ -299,15 +245,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               <div className="flex flex-wrap items-center gap-2 mt-3">
                 <span
                   className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border ${
-                    getCategoryColor(task.category)
-                  }`}
-                >
-                  <Folder className="h-3 w-3" />
-                  <span>{task.category}</span>
-                </span>
-
-                <span
-                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border ${
                     priorityColors[task.priority]
                   }`}
                 >
@@ -330,21 +267,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 )}
 
                 {isExpired && (
-                  <span className="inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200" title="Expired">
                     <CalendarX className="h-3 w-3" />
-                    <span>Expired</span>
                   </span>
                 )}
-              </div>
-
-              <div className="flex gap-2 mt-3">
-                <button
-                  onClick={handleShare}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition-all duration-200"
-                >
-                  <Share2 className="h-3.5 w-3.5" />
-                  <span>Share</span>
-                </button>
               </div>
 
               {task.dueDate && (
